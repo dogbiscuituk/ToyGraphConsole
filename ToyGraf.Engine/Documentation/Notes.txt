@@ -1,0 +1,48 @@
+Controller
+==========
+
+The Controller object currently uses a number of subsidiary objects to perform its tasks.
+Are these really necessary?
+
+
+Loader
+======
+
+Has no state, other than a history of resource IDs needed for future deletion:
+
+        private readonly List<int> TextureIDs = new List<int>();
+        private readonly List<int> VaoIDs = new List<int>();
+        private readonly List<int> VboIDs = new List<int>();
+
+This functionality should be rolled into other objects:
+(1) VaoIDs is only referenced once, in CreateVao(), called from LoadToVAO().
+    Let the new VaoID be the responsibility of the new (IDisposable) Model instead.
+(2) VboIDs is referenced twice, in BindIndicesBuffer() and StoreDataInAttributeList().
+    Again, LoadToVAO() is the root caller, so the Model can take control of these.
+
+23:13 21/07/2019 done.
+
+
+Renderer
+========
+
+Has no state, other than the Projection Matrix:
+
+        private Matrix4 ProjectionMatrix;
+        private float
+            FOVy = 70, // degrees
+            Znear = 0.1f,
+            Zfar = 1000;
+
+This functionality should be rolled into another object.
+
+00:25 22/07/2019 done.
+
+
+Shader
+======
+
+Holds IDs for its program, and various shaders (vertex, geometry, fragment).
+Again, these are only needed for housekeeping (final disposal).
+This functionality should be rolled into another object.
+
